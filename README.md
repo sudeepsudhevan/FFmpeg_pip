@@ -10,15 +10,19 @@ pip install ffmpeg-tools
 
 ## Usage
 
-### 1. Generating FFmpeg Commands
+### 1. Generating & Running FFmpeg Commands
 
 ```python
-from ffmpeg_tools import build_command
+from ffmpeg_tools import build_command, run_command
 
-# Generate a high-quality compression command
+# 1. Build the command
 cmd = build_command("compress_high_quality", input="video.mp4", output="compressed.mp4")
-print(cmd)
-# Output: ['ffmpeg', '-y', '-i', 'video.mp4', ...]
+
+# 2. Run the command (returns True if successful)
+success = run_command(cmd)
+
+# Optional: Dry run to just print the command
+run_command(cmd, dry_run=True)
 ```
 
 ### 2. Downloading Videos

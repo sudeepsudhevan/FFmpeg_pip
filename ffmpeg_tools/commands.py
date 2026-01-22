@@ -283,3 +283,32 @@ def build_command(profile: str, db_path: str = None, **kwargs) -> list[str]:
     except KeyError as e:
         missing_key = e.args[0]
         raise KeyError(f"Missing required parameter '{missing_key}' for profile '{profile}'.")
+
+
+def run_command(command: list[str], dry_run: bool = False) -> bool:
+    """
+    Executes the given FFmpeg command list using subprocess.
+    
+    Args:
+        command (list[str]): The command list (e.g., from build_command).
+        dry_run (bool): If True, prints the command without executing.
+        
+    Returns:
+        bool: True if successful, False otherwise.
+    """
+    if dry_run:
+        print(f"Dry run: {' '.join(command)}")
+        return True
+
+    try:
+        import subprocess
+        logger.info(f"Running command: {' '.join(command)}")
+        subprocess.run(command, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"FFmpeg execution failed: {e}")
+        return False
+    except FileNotFoundError:
+        logger.error("FFmpeg not found. Please ensure ffmpeg is in your system PATH.")
+        return False
+
