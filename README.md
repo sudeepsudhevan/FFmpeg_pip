@@ -5,7 +5,7 @@ A Python package for simplified FFmpeg command generation, video downloading, an
 ## Installation
 
 ```bash
-pip install .
+pip install ffmpeg-tools
 ```
 
 ## Usage
