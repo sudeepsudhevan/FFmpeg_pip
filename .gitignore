@@ -7,6 +7,9 @@ __pycache__/
 *.egg-info/
 .buildozer/
 
+dist/
+build/
+
 # Distribution / packaging
 .Python
 env/
@@ -39,3 +42,5 @@ instance/
  
 # Cookie
 cookies.txt
+
+.pypirc
