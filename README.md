@@ -25,7 +25,27 @@ success = run_command(cmd)
 run_command(cmd, dry_run=True)
 ```
 
-### 2. Downloading Videos
+### 2. Custom Commands (Dynamic JSON)
+
+You can add your own FFmpeg command templates without modifying the package source.
+
+```python
+from ffmpeg_tools.commands import add_command, build_command
+
+# Add a new command template
+add_command(
+    name="my_custom_encode",
+    command=["ffmpeg", "-y", "-i", "{input}", "-c:v", "libx264", "-preset", "fast", "{output}"],
+    description="My custom fast encoding profile"
+)
+
+# Use the new command
+cmd = build_command("my_custom_encode", input="video.mp4", output="video_fast.mp4")
+```
+
+The commands are stored in `commands.json` in the package directory.
+
+### 3. Downloading Videos
 
 ```python
 from pathlib import Path
@@ -39,7 +59,7 @@ download_video(
 )
 ```
 
-### 3. Cleaning Filenames
+### 4. Cleaning Filenames
 
 ```python
 from pathlib import Path

@@ -10,8 +10,14 @@ import logging
 import os
 from copy import deepcopy
 
+
+from pathlib import Path
+
 # Setup logger
 logger = logging.getLogger(__name__)
+
+# Default path for external commands JSON
+DEFAULT_DB_PATH = Path(__file__).parent / "commands.json"
 
 # Hardcoded Baseline Commands
 FFMPEG_COMMANDS = {
@@ -244,15 +250,58 @@ def get_all_commands(db_path: str = None) -> dict:
     """
     all_cmds = deepcopy(FFMPEG_COMMANDS)
     
-    if db_path and os.path.exists(db_path):
+    target_path = db_path if db_path else DEFAULT_DB_PATH
+    
+    if os.path.exists(target_path):
         try:
-            with open(db_path, "r", encoding="utf-8") as f:
-                external_cmds = json.load(f)
-                all_cmds.update(external_cmds)
+            with open(target_path, "r", encoding="utf-8") as f:
+                content = f.read().strip()
+                if content:
+                    external_cmds = json.loads(content)
+                    all_cmds.update(external_cmds)
         except (json.JSONDecodeError, IOError) as e:
-            logger.warning(f"Failed to load external commands from {db_path}: {e}")
+            logger.warning(f"Failed to load external commands from {target_path}: {e}")
             
     return all_cmds
+
+
+def add_command(name: str, command: list[str], description: str, db_path: str = None) -> None:
+    """
+    Adds a new command to the external JSON file.
+    
+    Args:
+        name (str): Unique name for the command profile.
+        command (list[str]): The FFmpeg command list.
+        description (str): Description of what the command does.
+        db_path (str, optional): Path to external JSON command DB.
+    """
+    target_path = db_path if db_path else DEFAULT_DB_PATH
+    
+    # Load existing external commands
+    external_cmds = {}
+    if os.path.exists(target_path):
+        try:
+            with open(target_path, "r", encoding="utf-8") as f:
+                content = f.read().strip()
+                if content:
+                    external_cmds = json.loads(content)
+        except (json.JSONDecodeError, IOError):
+            logger.warning(f"Could not read existing commands from {target_path}, starting fresh.")
+    
+    # Add/Update the command
+    external_cmds[name] = {
+        "command": command,
+        "description": description
+    }
+    
+    # Save back to JSON
+    try:
+        with open(target_path, "w", encoding="utf-8") as f:
+            json.dump(external_cmds, f, indent=4)
+        logger.info(f"Command '{name}' added successfully to {target_path}")
+    except IOError as e:
+        logger.error(f"Failed to save command '{name}' to {target_path}: {e}")
+        raise
 
 
 def build_command(profile: str, db_path: str = None, **kwargs) -> list[str]:
