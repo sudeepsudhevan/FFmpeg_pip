@@ -294,6 +294,7 @@ def add_command(name: str, command: list[str], description: str, db_path: str = 
         "description": description
     }
     
+
     # Save back to JSON
     try:
         with open(target_path, "w", encoding="utf-8") as f:
@@ -302,6 +303,25 @@ def add_command(name: str, command: list[str], description: str, db_path: str = 
     except IOError as e:
         logger.error(f"Failed to save command '{name}' to {target_path}: {e}")
         raise
+
+
+def list_commands(db_path: str = None) -> None:
+    """
+    Prints all available command profiles and their descriptions to the console.
+    
+    Args:
+        db_path (str, optional): Path to external JSON command DB.
+    """
+    commands = get_all_commands(db_path)
+    
+    print(f"\n{'PROFILE':<25} | {'DESCRIPTION'}")
+    print("-" * 80)
+    
+    for name, data in commands.items():
+        desc = data.get("description", "No description")
+        print(f"{name:<25} | {desc}")
+    print("-" * 80 + "\n")
+
 
 
 def build_command(profile: str, db_path: str = None, **kwargs) -> list[str]:

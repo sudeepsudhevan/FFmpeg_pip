@@ -18,7 +18,7 @@ Open `setup.py` and increment the `version` number (e.g., change `0.1.2` to `0.1
 ```python
 setup(
     name="ffmpeg_tools",
-    version="0.1.3",  # <--- Update this
+    version="0.1.7",  # <--- Update this
     ...
 )
 ```

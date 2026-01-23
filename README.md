@@ -45,6 +45,13 @@ cmd = build_command("my_custom_encode", input="video.mp4", output="video_fast.mp
 
 The commands are stored in `commands.json` in the package directory.
 
+```python
+from ffmpeg_tools import list_commands
+
+# Print all available commands
+list_commands()
+```
+
 ### 3. Downloading Videos
 
 ```python
